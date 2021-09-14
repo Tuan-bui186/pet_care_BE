@@ -10,15 +10,6 @@ exports.create = (req, res) => {
       throw er;
     });
 };
-exports.count = (req, res) => {
-  Tag.findAndCountAll({ distinct: true })
-    .then((data) => {
-      res.json({ data: data });
-    })
-    .catch((er) => {
-      throw er;
-    });
-};
 exports.findall = (req, res) => {
   var page = req.query.page;
   var status = req.query.status;

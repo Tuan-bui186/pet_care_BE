@@ -1,6 +1,7 @@
 var New = require("../models").New;
 var TagNew = require("../models").TagNew;
 var Tag = require("../models").Tag;
+var User = require("../models").User;
 require("dotenv").config();
 let PAGE_SIZE = parseInt(process.env.PAGE_SIZE);
 exports.create = (req, res) => {
@@ -21,6 +22,7 @@ exports.findall = (req, res) => {
       order: [["id", "DESC"]],
       offset: soLuongBoQua,
       limit: PAGE_SIZE,
+      include: [{ model: User, attributes: ["firstName", "lastName"] }],
     })
       .then((data) => {
         res.json({ data: data });
@@ -31,6 +33,7 @@ exports.findall = (req, res) => {
   } else {
     New.findAndCountAll({
       order: [["id", "DESC"]],
+      include: [{ model: User, attributes: ["firstName", "lastName"] }],
     })
       .then((data) => {
         res.json({ data: data });
@@ -50,6 +53,7 @@ exports.newsHome = (req, res) => {
       offset: soLuongBoQua,
       limit: 8,
       where: { status: 1 },
+      include: [{ model: User, attributes: ["firstName", "lastName"] }],
     })
       .then((data) => {
         res.json({ data: data });
@@ -62,6 +66,7 @@ exports.newsHome = (req, res) => {
       order: [["id", "DESC"]],
       limit: 8,
       where: { status: 1 },
+      inclue: [{ model: User, attributes: ["firstName", "lastName"] }],
     })
       .then((data) => {
         res.json({ data: data });
@@ -72,7 +77,13 @@ exports.newsHome = (req, res) => {
   }
 };
 exports.findone = (req, res) => {
-  New.findOne({ where: { id: req.params.id }, include: [{ model: Tag }] })
+  New.findOne({
+    where: { id: req.params.id },
+    include: [
+      { model: Tag },
+      { model: User, attributes: ["firstName", "lastName"] },
+    ],
+  })
     .then((data) => {
       res.json({ data: data });
     })

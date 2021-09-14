@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.STRING,
       description: DataTypes.STRING(1000),
+      icon: DataTypes.STRING(2000),
       status: DataTypes.INTEGER,
     },
     {
