@@ -16,8 +16,11 @@ require("./routes/TagNew")(app);
 require("./routes/New")(app);
 require("./routes/User")(app);
 require("./routes/Role")(app);
+require("./routes/Weight")(app);
 require("./routes/Service")(app);
 require("./routes/Gallery")(app);
+require("./routes/Contact")(app);
+require("./routes/SocialNetwork")(app);
 require("./routes/Login")(app);
 app.use(function (err, req, res, next) {
   res.status(500).send(err);
