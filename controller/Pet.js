@@ -1,22 +1,11 @@
-var User = require("../models").User;
-const jwt = require("jsonwebtoken");
-
+var Pet = require("../models").Pet;
+var ImagePet = require("../models").ImagePet;
 require("dotenv").config();
 let PAGE_SIZE = parseInt(process.env.PAGE_SIZE);
 exports.create = (req, res) => {
-  User.findOne({ where: { email: req.body.email } })
+  Pet.create(req.body, { include: ["imgpet"] })
     .then((data) => {
-      if (data === null) {
-        User.create(req.body, { include: ["userrole"] })
-          .then((data) => {
-            res.json({ data: data });
-          })
-          .catch((er) => {
-            throw er;
-          });
-      } else {
-        res.json({ message: "Email đã tồn tại!" });
-      }
+      res.json({ data: data });
     })
     .catch((er) => {
       throw er;
@@ -29,7 +18,7 @@ exports.findall = (req, res) => {
   let soLuongBoQua = (page - 1) * PAGE_SIZE;
   if (page || status) {
     if (page && !status) {
-      User.findAndCountAll({
+      Pet.findAndCountAll({
         order: [["id", "DESC"]],
         offset: soLuongBoQua,
         limit: PAGE_SIZE,
@@ -41,7 +30,7 @@ exports.findall = (req, res) => {
           throw er;
         });
     } else if (status && !page) {
-      User.findAndCountAll({
+      Pet.findAndCountAll({
         where: { status: status },
         order: [["id", "DESC"]],
       })
@@ -52,7 +41,7 @@ exports.findall = (req, res) => {
           throw er;
         });
     } else {
-      User.findAndCountAll({
+      Pet.findAndCountAll({
         where: { status: status },
         order: [["id", "DESC"]],
         offset: soLuongBoQua,
@@ -66,7 +55,7 @@ exports.findall = (req, res) => {
         });
     }
   } else {
-    User.findAndCountAll({ order: [["id", "DESC"]] })
+    Pet.findAndCountAll({ order: [["id", "DESC"]] })
       .then((data) => {
         res.json({ data: data });
       })
@@ -76,28 +65,7 @@ exports.findall = (req, res) => {
   }
 };
 exports.findone = (req, res) => {
-  User.findOne({ where: { id: req.params.id } })
-    .then((data) => {
-      res.json({ data: data });
-    })
-    .catch((er) => {
-      throw er;
-    });
-};
-exports.register = (req, res) => {
-  User.findOne({
-    where: { email: req.query.email, password: req.query.password },
-    attributes: [
-      "avatar",
-      "firstName",
-      "lastName",
-      "id",
-      "phone",
-      "male",
-      "address",
-      "email",
-    ],
-  })
+  Pet.findOne({ where: { id: req.params.id } })
     .then((data) => {
       res.json({ data: data });
     })
@@ -106,7 +74,7 @@ exports.register = (req, res) => {
     });
 };
 exports.delete = (req, res) => {
-  User.destroy({ where: { id: req.params.id } })
+  Pet.destroy({ where: { id: req.params.id } })
     .then((data) => {
       res.json({ data: data });
     })
@@ -115,33 +83,11 @@ exports.delete = (req, res) => {
     });
 };
 exports.update = (req, res) => {
-  User.update(req.body, { where: { id: req.params.id } })
+  Pet.update(req.body, { where: { id: req.params.id } })
     .then((data) => {
       res.json({ data: data });
     })
     .catch((er) => {
       throw er;
     });
-};
-exports.checkUser = (req, res) => {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    String(req.headers.authorization.split(" ")[0]).toLowerCase() === "bearer"
-  ) {
-    var token = req.headers.authorization.split(" ")[1];
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
-      if (err) {
-        return res.status(403).send({
-          message: "token loi roi",
-        });
-      } else {
-        res.json({ data: data });
-      }
-    });
-  } else {
-    return res.status(403).send({
-      message: "UN",
-    });
-  }
 };

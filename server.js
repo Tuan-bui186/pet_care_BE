@@ -20,8 +20,10 @@ require("./routes/Weight")(app);
 require("./routes/Service")(app);
 require("./routes/Gallery")(app);
 require("./routes/Contact")(app);
+require("./routes/Pet")(app);
 require("./routes/SocialNetwork")(app);
 require("./routes/Login")(app);
+require("./routes/ImgPet")(app);
 app.use(function (err, req, res, next) {
   res.status(500).send(err);
 });

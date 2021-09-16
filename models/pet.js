@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         targetKey: "id",
       });
-      this.hasMany(models.ImagePet);
+      this.hasMany(models.ImagePet, { as: "imgpet" });
     }
   }
   Pet.init(
