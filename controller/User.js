@@ -33,6 +33,7 @@ exports.findall = (req, res) => {
         order: [["id", "DESC"]],
         offset: soLuongBoQua,
         limit: PAGE_SIZE,
+        attributes: { exclude: ["password"] },
       })
         .then((data) => {
           res.json({ data: data });
@@ -44,6 +45,7 @@ exports.findall = (req, res) => {
       User.findAndCountAll({
         where: { status: status },
         order: [["id", "DESC"]],
+        attributes: { exclude: ["password"] },
       })
         .then((data) => {
           res.json({ data: data });
@@ -57,6 +59,7 @@ exports.findall = (req, res) => {
         order: [["id", "DESC"]],
         offset: soLuongBoQua,
         limit: PAGE_SIZE,
+        attributes: { exclude: ["password"] },
       })
         .then((data) => {
           res.json({ data: data });
@@ -66,7 +69,10 @@ exports.findall = (req, res) => {
         });
     }
   } else {
-    User.findAndCountAll({ order: [["id", "DESC"]] })
+    User.findAndCountAll({
+      order: [["id", "DESC"]],
+      attributes: { exclude: ["password"] },
+    })
       .then((data) => {
         res.json({ data: data });
       })
