@@ -24,6 +24,10 @@ require("./routes/Pet")(app);
 require("./routes/SocialNetwork")(app);
 require("./routes/Login")(app);
 require("./routes/ImgPet")(app);
+require("./routes/category")(app);
+require("./routes/Product")(app);
+require("./routes/TagProduct")(app);
+require("./routes/ImageProduct")(app);
 app.use(function (err, req, res, next) {
   res.status(500).send(err);
 });

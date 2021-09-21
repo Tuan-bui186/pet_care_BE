@@ -4,6 +4,7 @@ module.exports = (app) => {
 
   router.post("/", Pet.create);
   router.get("/", Pet.findall);
+  router.get("/countTypePet", Pet.countTypePet);
   router.get("/checkPet", Pet.checkPet);
   router.get("/:id", Pet.findone);
   router.get("/getPetUser/:id", Pet.getPetUser);

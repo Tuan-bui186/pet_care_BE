@@ -20,9 +20,10 @@ exports.findall = (req, res) => {
   if (page || status) {
     if (page && !status) {
       Pet.findAndCountAll({
-        order: [["id", "DESC"]],
+        order: [["createdAt", "DESC"]],
         offset: soLuongBoQua,
         limit: PAGE_SIZE,
+        where: { checkAdmin: 2 },
       })
         .then((data) => {
           res.json({ data: data });
@@ -32,8 +33,8 @@ exports.findall = (req, res) => {
         });
     } else if (status && !page) {
       Pet.findAndCountAll({
-        where: { status: status },
-        order: [["id", "DESC"]],
+        where: { status: status, checkAdmin: 2 },
+        order: [["createdAt", "DESC"]],
       })
         .then((data) => {
           res.json({ data: data });
@@ -43,8 +44,8 @@ exports.findall = (req, res) => {
         });
     } else {
       Pet.findAndCountAll({
-        where: { status: status },
-        order: [["id", "DESC"]],
+        where: { status: status, checkAdmin: 2 },
+        order: [["createdAt", "DESC"]],
         offset: soLuongBoQua,
         limit: PAGE_SIZE,
       })
@@ -56,7 +57,10 @@ exports.findall = (req, res) => {
         });
     }
   } else {
-    Pet.findAndCountAll({ order: [["id", "DESC"]] })
+    Pet.findAndCountAll({
+      order: [["createdAt", "DESC"]],
+      where: { checkAdmin: 2 },
+    })
       .then((data) => {
         res.json({ data: data });
       })
@@ -125,6 +129,30 @@ exports.delete = (req, res) => {
   Pet.destroy({ where: { id: req.params.id } })
     .then((data) => {
       res.json({ data: data });
+    })
+    .catch((er) => {
+      throw er;
+    });
+};
+exports.countTypePet = (req, res) => {
+  Pet.findAll({
+    attributes: ["type"],
+  })
+    .then((data) => {
+      let dog = 0;
+      let cat = 0;
+      let other = 0;
+      for (let i = 0; i < data.length; i++) {
+        const element = data[i].dataValues.type;
+        if (element === "chó") {
+          dog += 1;
+        } else if (element === "mèo") {
+          cat += 1;
+        } else {
+          other += 1;
+        }
+      }
+      res.json({ countDog: dog, countCat: cat, countOther: other });
     })
     .catch((er) => {
       throw er;
