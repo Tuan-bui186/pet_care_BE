@@ -2,6 +2,7 @@ var Product = require("../models").Product;
 var Tag = require("../models").Tag;
 var Category = require("../models").Category;
 var ImageProduct = require("../models").ImageProduct;
+const { Op } = require("sequelize");
 require("dotenv").config();
 let PAGE_SIZE = parseInt(process.env.PAGE_SIZE);
 exports.create = (req, res) => {
@@ -23,6 +24,7 @@ exports.findall = (req, res) => {
       Product.findAndCountAll({
         order: [["id", "DESC"]],
         offset: soLuongBoQua,
+        where: { quantity: { [Op.ne]: 0 } },
         limit: PAGE_SIZE,
       })
         .then((data) => {
@@ -33,7 +35,7 @@ exports.findall = (req, res) => {
         });
     } else if (status && !page) {
       Product.findAndCountAll({
-        where: { status: status },
+        where: { status: status, quantity: { [Op.ne]: 0 } },
         order: [["id", "DESC"]],
       })
         .then((data) => {
@@ -44,7 +46,7 @@ exports.findall = (req, res) => {
         });
     } else {
       Product.findAndCountAll({
-        where: { status: status },
+        where: { status: status, quantity: { [Op.ne]: 0 } },
         order: [["id", "DESC"]],
         offset: soLuongBoQua,
         limit: PAGE_SIZE,
@@ -57,7 +59,10 @@ exports.findall = (req, res) => {
         });
     }
   } else {
-    Product.findAndCountAll({ order: [["id", "DESC"]] })
+    Product.findAndCountAll({
+      order: [["id", "DESC"]],
+      where: { quantity: { [Op.ne]: 0 } },
+    })
       .then((data) => {
         res.json({ data: data });
       })
@@ -93,6 +98,19 @@ exports.delete = (req, res) => {
 };
 exports.update = (req, res) => {
   Product.update(req.body, { where: { id: req.params.id } })
+    .then((data) => {
+      res.json({ data: data });
+    })
+    .catch((er) => {
+      throw er;
+    });
+};
+
+exports.updateQuantity = (req, res) => {
+  console.log(req.body);
+  Product.bulkCreate(req.body, {
+    updateOnDuplicate: ["quantity"],
+  })
     .then((data) => {
       res.json({ data: data });
     })

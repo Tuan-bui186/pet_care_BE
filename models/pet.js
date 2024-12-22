@@ -26,11 +26,12 @@ module.exports = (sequelize, DataTypes) => {
       text: DataTypes.TEXT,
       checkAdmin: DataTypes.INTEGER,
       status: DataTypes.INTEGER,
+      quantity: DataTypes.INTEGER,
     },
     {
       sequelize,
       modelName: "Pet",
-    }
+    },
   );
   return Pet;
 };

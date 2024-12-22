@@ -2,6 +2,7 @@ var New = require("../models").New;
 var TagNew = require("../models").TagNew;
 var Tag = require("../models").Tag;
 var User = require("../models").User;
+const Op = require("Sequelize").Op;
 require("dotenv").config();
 let PAGE_SIZE = parseInt(process.env.PAGE_SIZE);
 exports.create = (req, res) => {
@@ -83,6 +84,18 @@ exports.findone = (req, res) => {
       { model: Tag },
       { model: User, attributes: ["firstName", "lastName"] },
     ],
+  })
+    .then((data) => {
+      res.json({ data: data });
+    })
+    .catch((er) => {
+      throw er;
+    });
+};
+exports.findOtherNews = (req, res) => {
+  New.findAndCountAll({
+    where: { id: { [Op.ne]: req.params.id } },
+    limit: 5,
   })
     .then((data) => {
       res.json({ data: data });

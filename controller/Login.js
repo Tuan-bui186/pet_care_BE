@@ -20,12 +20,11 @@ exports.login = (req, res) => {
       var user = {
         id: data.id,
         avatar: data.avatar,
-        name: data.name,
         // role: data[0].Roles[0].name,
       };
       var token = jwt.sign({ user }, ACCESS_TOKEN_SECRET, {
         algorithm: "HS256",
-        expiresIn: "3h",
+        // expiresIn: "3h",
       });
       res.json(token);
     } else {

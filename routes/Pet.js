@@ -10,5 +10,6 @@ module.exports = (app) => {
   router.get("/getPetUser/:id", Pet.getPetUser);
   router.delete("/:id", Pet.delete);
   router.patch("/:id", Pet.update);
+  router.patch("/update/quantity", Pet.updateQuantity);
   app.use("/pets", router);
 };

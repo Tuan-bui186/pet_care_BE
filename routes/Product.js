@@ -4,6 +4,7 @@ module.exports = (app) => {
 
   router.post("/", Product.create);
   router.get("/", Product.findall);
+  router.patch("/quantity", Product.updateQuantity);
   router.get("/:id", Product.findone);
   router.delete("/:id", Product.delete);
   router.patch("/:id", Product.update);

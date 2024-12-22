@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.UserRole, { foreignKey: "userId", as: "userrole" });
       this.hasMany(models.Pet);
       this.hasMany(models.New);
+      this.hasMany(models.Animal, { foreignKey: "ownerId", as: "animals" });
     }
   }
   User.init(

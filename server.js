@@ -12,6 +12,8 @@ app.get("/", (req, res) => {
   );
 });
 require("./routes/Tag")(app);
+require("./routes/Schedule")(app);
+require("./routes/bill")(app);
 require("./routes/TagNew")(app);
 require("./routes/New")(app);
 require("./routes/User")(app);
@@ -28,6 +30,10 @@ require("./routes/category")(app);
 require("./routes/Product")(app);
 require("./routes/TagProduct")(app);
 require("./routes/ImageProduct")(app);
+require("./routes/Shop")(app);
+require("./routes/animal")(app);
+require("./routes/healthRecord")(app);
+require("./routes/appointment")(app);
 app.use(function (err, req, res, next) {
   res.status(500).send(err);
 });

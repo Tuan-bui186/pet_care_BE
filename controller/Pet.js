@@ -1,9 +1,12 @@
 var Pet = require("../models").Pet;
+var Product = require("../models").Product;
+var Category = require("../models").Category;
 const Op = require("Sequelize").Op;
 var User = require("../models").User;
 require("dotenv").config();
 let PAGE_SIZE = parseInt(process.env.PAGE_SIZE);
 exports.create = (req, res) => {
+  console.log(req.body);
   Pet.create(req.body, { include: ["imgpet"] })
     .then((data) => {
       res.json({ data: data });
@@ -23,7 +26,7 @@ exports.findall = (req, res) => {
         order: [["createdAt", "DESC"]],
         offset: soLuongBoQua,
         limit: PAGE_SIZE,
-        where: { checkAdmin: 2 },
+        where: { checkAdmin: 2, quantity: { [Op.ne]: 0 } },
       })
         .then((data) => {
           res.json({ data: data });
@@ -33,7 +36,7 @@ exports.findall = (req, res) => {
         });
     } else if (status && !page) {
       Pet.findAndCountAll({
-        where: { status: status, checkAdmin: 2 },
+        where: { status: status, checkAdmin: 2, quantity: { [Op.ne]: 0 } },
         order: [["createdAt", "DESC"]],
       })
         .then((data) => {
@@ -44,7 +47,7 @@ exports.findall = (req, res) => {
         });
     } else {
       Pet.findAndCountAll({
-        where: { status: status, checkAdmin: 2 },
+        where: { status: status, checkAdmin: 2, quantity: { [Op.ne]: 0 } },
         order: [["createdAt", "DESC"]],
         offset: soLuongBoQua,
         limit: PAGE_SIZE,
@@ -59,7 +62,100 @@ exports.findall = (req, res) => {
   } else {
     Pet.findAndCountAll({
       order: [["createdAt", "DESC"]],
-      where: { checkAdmin: 2 },
+      where: { checkAdmin: 2, quantity: { [Op.ne]: 0 } },
+    })
+      .then((data) => {
+        res.json({ data: data });
+      })
+      .catch((er) => {
+        throw er;
+      });
+  }
+};
+exports.getAllShop = (req, res) => {
+  var page = req.query.page;
+  var type = req.query.type;
+  var name = req.query.name;
+  var category = req.query.category;
+  var petOrProduct = req.query.petOrProduct;
+  page = parseInt(page);
+  let soLuongBoQua = (page - 1) * PAGE_SIZE;
+  if (petOrProduct === "pet") {
+    if (type && name) {
+      Pet.findAndCountAll({
+        where: {
+          status: 1,
+          checkAdmin: 2,
+          type: type,
+          name: { [Op.like]: `%${name}%` },
+        },
+        order: [["createdAt", "DESC"]],
+        offset: soLuongBoQua,
+        limit: PAGE_SIZE,
+      })
+        .then((data) => {
+          res.json({ data: data });
+        })
+        .catch((er) => {
+          throw er;
+        });
+    } else if (type && !name) {
+      Pet.findAndCountAll({
+        where: { status: 1, checkAdmin: 2, type: type },
+        order: [["createdAt", "DESC"]],
+        offset: soLuongBoQua,
+        limit: PAGE_SIZE,
+      })
+        .then((data) => {
+          res.json({ data: data });
+        })
+        .catch((er) => {
+          throw er;
+        });
+    } else if (!type && name) {
+      Pet.findAndCountAll({
+        where: {
+          status: 1,
+          checkAdmin: 2,
+          name: { [Op.like]: `%${name}%` },
+        },
+        order: [["createdAt", "DESC"]],
+        offset: soLuongBoQua,
+        limit: PAGE_SIZE,
+      })
+        .then((data) => {
+          res.json({ data: data });
+        })
+        .catch((er) => {
+          throw er;
+        });
+    } else {
+      Pet.findAndCountAll({
+        where: { status: 1, checkAdmin: 2 },
+        order: [["createdAt", "DESC"]],
+        offset: soLuongBoQua,
+        limit: PAGE_SIZE,
+      })
+        .then((data) => {
+          res.json({ data: data });
+        })
+        .catch((er) => {
+          throw er;
+        });
+    }
+  } else {
+    Product.findAndCountAll({
+      where: { status: 1, name: { [Op.like]: `%${name}%` } },
+      order: [["createdAt", "DESC"]],
+      offset: soLuongBoQua,
+      limit: PAGE_SIZE,
+      include: [
+        {
+          model: Category,
+          attributes: ["id", "name"],
+          where: { status: 1, name: category },
+        },
+      ],
     })
       .then((data) => {
         res.json({ data: data });
@@ -116,7 +212,6 @@ exports.findone = (req, res) => {
     });
 };
 exports.getPetUser = (req, res) => {
-  console.log("hello");
   Pet.findAndCountAll({ where: { userId: req.params.id } })
     .then((data) => {
       res.json({ data: data });
@@ -136,6 +231,7 @@ exports.delete = (req, res) => {
 };
 exports.countTypePet = (req, res) => {
   Pet.findAll({
+    where: { status: 1 },
     attributes: ["type"],
   })
     .then((data) => {
@@ -152,7 +248,12 @@ exports.countTypePet = (req, res) => {
           other += 1;
         }
       }
-      res.json({ countDog: dog, countCat: cat, countOther: other });
+      res.json({
+        countDog: dog,
+        countCat: cat,
+        countOther: other,
+        countAll: data.length,
+      });
     })
     .catch((er) => {
       throw er;
@@ -160,6 +261,18 @@ exports.countTypePet = (req, res) => {
 };
 exports.update = (req, res) => {
   Pet.update(req.body, { where: { id: req.params.id } })
+    .then((data) => {
+      res.json({ data: data });
+    })
+    .catch((er) => {
+      throw er;
+    });
+};
+
+exports.updateQuantity = (req, res) => {
+  Pet.bulkCreate(req.body, {
+    updateOnDuplicate: ["quantity"],
+  })
     .then((data) => {
       res.json({ data: data });
     })
