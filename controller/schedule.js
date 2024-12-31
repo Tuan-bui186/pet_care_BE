@@ -73,6 +73,16 @@ exports.findone = (req, res) => {
       throw er;
     });
 };
+exports.findUser = (req, res) => {
+  const userId = req.params.userId;
+  Schedule.findAll({ where: { userId: userId }, order: [["id", "DESC"]] })
+    .then((data) => {
+      res.json({ data: data });
+    })
+    .catch((er) => {
+      throw er;
+    });
+};
 exports.delete = (req, res) => {
   Schedule.destroy({ where: { id: req.params.id } })
     .then((data) => {

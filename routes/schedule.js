@@ -5,6 +5,7 @@ module.exports = (app) => {
   router.post("/", Schedule.create);
   router.get("/", Schedule.findall);
   router.get("/:id", Schedule.findone);
+  router.get("/user/:userId", Schedule.findUser);
   router.delete("/:id", Schedule.delete);
   router.patch("/:id", Schedule.update);
   app.use("/Schedules", router);

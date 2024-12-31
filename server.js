@@ -34,6 +34,7 @@ require("./routes/Shop")(app);
 require("./routes/animal")(app);
 require("./routes/healthRecord")(app);
 require("./routes/appointment")(app);
+require("./routes/statistics")(app);
 app.use(function (err, req, res, next) {
   res.status(500).send(err);
 });
